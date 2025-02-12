@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('buildpost')
-		.setDescription('Debug!')
+		.setDescription('Snapps\' private tool for making cool things.')
 		.addStringOption(option =>
 			option.setName('color')
 				.setDescription('Hex color of post.'))
