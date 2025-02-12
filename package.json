@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "discord.js": "^14.16.1",
+    "dotenv": "^16.4.5"
+  },
+  "name": "good.kobold",
+  "version": "1.0.0",
+  "description": "Snapps' personal bot; their goodest kobold <3",
+  "main": "bot.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
