@@ -150,10 +150,11 @@ async function getSessionInfo(interaction,sessionID) {
 		// Session Info Field
 
 		// Contributors
+		/* TODO : This seems to reset at points; Find a way to get them
 		embed.addFields(
 			{ name: 'Contributors', value: contributors.join(", ") }
 		 )
-
+		*/
 		// Session Snapshot
 		embed.setImage('attachment://'+sessionScreenshot.name);
 
