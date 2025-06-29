@@ -5,7 +5,7 @@ require('dotenv').config()
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('drawpile')
-		.setDescription('Get some info about the community drawpile.'),
+		.setDescription('Get some info about the community drawpile. Still a little buggy.'),
 		
 	async execute(interaction) {
 
