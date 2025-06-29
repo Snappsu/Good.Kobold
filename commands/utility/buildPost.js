@@ -3,7 +3,11 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('buildpost')
-		.setDescription('Snapps\' private tool for making cool things.')
+		.setDescription('Snapps\' private tool for making cool things. ')
+		.addStringOption(option =>
+			option.setName('desc')
+				.setDescription('Mandatory. Post text.')
+				.setRequired(true))
 		.addStringOption(option =>
 			option.setName('color')
 				.setDescription('Hex color of post.'))
@@ -11,8 +15,8 @@ module.exports = {
 			option.setName('imglink')
 				.setDescription('Link to media.'))
 		.addStringOption(option =>
-			option.setName('desc')
-				.setDescription('Post text.'))
+			option.setName('title')
+				.setDescription('Post title.'))
 		.addStringOption(option =>
 			option.setName('mirrors')
 				.setDescription('Link to mirrors/socials.')),
@@ -30,23 +34,39 @@ function buildPost(interaction){
 
 	if (interaction.user.id=='143978133798780928'){
 		embeds = []
-		// Main Container
+		// Main Embed
 		postToShare = new EmbedBuilder()
-		postToShare.setURL("https://snapps.dev")
+
+
+		//Title
+		if ( interaction.options.get("title")== null) {
+		} else {
+			postToShare.setTitle(interaction.options.get("title").value)
+		}
+
 		//if no color
 		if ( interaction.options.get("color")== null) {
 			postToShare.setColor('#9463ff')
 		} else {
 			postToShare.setColor(interaction.options.get("color").value)
 		}
-		postToShare.setAuthor({ name: 'Created by Snapps', iconURL: 'https://snapps.dev/img/global/embed.png', url: 'https://snapps.dev' })
+		postToShare.setAuthor({ name: '> Check out my stuff! <', url: 'https://snapps.dev' })
+		postToShare.setThumbnail('https://snapps.dev/img/global/embedB.gif')
 		postToShare.setDescription(interaction.options.get("desc").value)
-		//if mirrors added
+		postToShare.setFooter({ text: 'Spreading scalie propaganda since 2020'})
+		postToShare.setTimestamp(Date.now())
+
+
+		postURL = "https://snapps.dev"
+		postToShare.setURL(postURL)
+
+		// Link  embed (if mirrors added)
 		if ( interaction.options.get("mirrors")!= null) {
+			linkEmbed = new EmbedBuilder()
 			mirrorText = ""
 			const mirrorRegex = /\[([\w\d)]+)\]|\((\S+)\)/gm;
 			let mirrors;
-
+			i=0
 			while ((mirrors = mirrorRegex.exec(interaction.options.get("mirrors").value)) !== null) {
 				// This is necessary to avoid infinite loops with zero-width matches
 				if (mirrors.index === mirrorRegex.lastIndex) {
@@ -54,16 +74,29 @@ function buildPost(interaction){
 				}
 				
 				// The result can be accessed through the `m`-variable.
+				
 				mirrors.forEach((match, groupIndex) => {
 					if (match===undefined) {}
 					else if(groupIndex==1) mirrorText += match + ': '
-					else if(groupIndex==2) mirrorText += match + '\n'
+					else if(groupIndex==2) {
+						mirrorText += match + '\n'
+						
+						if (i==0) {
+							postURL=match
+							postToShare.setURL(postURL)
+						}
+						i=i+1;
+					}
 				});
 			}
-			postToShare.addFields({ name: '- – — < links > — – -', value: mirrorText})
+			linkEmbed.setDescription('\\- – — < links > — – -\n' +mirrorText)
+			//if no color
+			if ( interaction.options.get("color")== null) {
+				linkEmbed.setColor('#9463ff')
+			} else {
+				linkEmbed.setColor(interaction.options.get("color").value)
+			}
 		}
-		postToShare.setFooter({ text: 'Spreading scalie propaganda since 2020'})
-		postToShare.setTimestamp(Date.now())
 
 		//Image attatchments (up to 4)
 		const imageRegex = /([\d\/\.\-\w\:]+\/[\d\/\.\-\w]+)/gm;
@@ -80,21 +113,23 @@ function buildPost(interaction){
 			images.forEach((match, groupIndex) => {
 				if (groupIndex==1) {
 					if (firstEmbedSkipped) {
-						embeds.push(new EmbedBuilder().setURL("https://snapps.dev").setImage(match))
+						embeds.push(new EmbedBuilder().setURL(postURL).setImage(match))
 					} else {
 						firstEmbedSkipped = true
 						postToShare.setImage(match)
 						embeds.push(postToShare)
-
-
 					}
 					
 				}
 			});
 		}
+
+		if ( interaction.options.get("mirrors")!= null) {
+			embeds.push(linkEmbed)
+		}
+
 		
 
-		console.log(embeds)
 
 		return { embeds: embeds};
 	} else {
