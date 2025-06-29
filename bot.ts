@@ -68,10 +68,11 @@ async function setBotPresence(arguments){
   });
 }
 
+//Message of the day.
+//Cycles through all the messages in motd every motdTimer ms
 var motd = ["Please refrain from touching the service kobold."]
-
+var motdTimer = 15000
 function cycleMOTD(){
-  console.log("cycling motd")
   var message;
   message = motd.pop()
   motd.unshift(message)
@@ -83,10 +84,10 @@ function cycleMOTD(){
 // It makes some properties non-nullable.
 client.once(Events.ClientReady, readyClient => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+  // Start motd cycle
   cycleMOTD();
-  setInterval(cycleMOTD, 15000); 
-  console.log()
-  
+  setInterval(cycleMOTD, motdTimer); 
 });
 
 
@@ -113,7 +114,8 @@ for (const folder of commandFolders) {
 //When the client recieves a command
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
-	console.log(interaction);
+	//console.log(interaction);
+  
   const command = interaction.client.commands.get(interaction.commandName);
 
 	if (!command) {
@@ -123,6 +125,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
 		await command.execute(interaction);
+
+    
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
